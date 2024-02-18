@@ -8,7 +8,7 @@ export function MainFooter(props: MainFooterProps) {
       <hr className="my-3" />
       <div className="social-links container flex items-center gap-2 py-5">
         <Link
-          className="text-sm underline decoration-stone-400 underline-offset-2 transition-colors hover:text-stone-400"
+          className="text-sm underline decoration-stone-100/40 underline-offset-2 transition-colors hover:text-stone-100/80"
           href="https://github.com/1005hoon"
           target="_blank"
         >
@@ -24,7 +24,7 @@ export function MainFooter(props: MainFooterProps) {
         </Link>
         ·
         <Link
-          className="text-sm underline decoration-stone-400 underline-offset-2 transition-colors hover:text-stone-400"
+          className="text-sm underline decoration-stone-100/40 underline-offset-2 transition-colors hover:text-stone-100/80"
           href="https://www.youtube.com/@hoonnotes"
           target="_blank"
         >
@@ -32,7 +32,7 @@ export function MainFooter(props: MainFooterProps) {
         </Link>
         ·
         <Link
-          className="text-sm underline decoration-stone-400 underline-offset-2 transition-colors hover:text-stone-400"
+          className="text-sm underline decoration-stone-100/40 underline-offset-2 transition-colors hover:text-stone-100/80"
           href="mailto:shoh@softly.ai"
           target="_blank"
         >
