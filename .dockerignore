@@ -1,0 +1,14 @@
+# .dockerignore
+node_modules
+.next
+out
+.git
+.github
+.husky
+.vscode
+*.md
+.env*
+npm-debug.log*
+Dockerfile*
+docker-compose*
+.dockerignore
