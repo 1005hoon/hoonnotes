@@ -12,17 +12,21 @@
     "docker:dev:down": "docker-compose -f docker-compose.dev.yml down"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
     "clsx": "^2.1.1",
     "next": "15.2.0",
+    "postcss": "^8.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^3.0.2"
+    "tailwind-merge": "^3.0.2",
+    "tailwind-scrollbar-hide": "^2.0.0",
+    "tailwindcss-radix": "^4.0.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.0.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -34,7 +38,7 @@
     "prettier": "^3.5.2",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.0.9",
     "typescript": "^5"
   }
 }
