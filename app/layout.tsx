@@ -1,5 +1,8 @@
-import { geistMono, inter, satoshi } from "@/app/styles/fonts";
 import "@/app/styles/globals.css";
+import { constructMetadata } from "@/lib/utils/functions";
+import { crimsonPro, geistMono, inter, satoshi } from "@/styles/fonts";
+
+export const metadata = constructMetadata();
 
 export default function RootLayout({
   children,
@@ -8,7 +11,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${satoshi.variable} ${inter.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${satoshi.variable} ${inter.variable} ${geistMono.variable} ${crimsonPro.variable} antialiased`}
+      >
         {children}
       </body>
     </html>
