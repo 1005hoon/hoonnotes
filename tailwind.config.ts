@@ -16,6 +16,7 @@ const config: Config = {
           "ui-monospace",
           "monospace",
         ],
+        crimson: ["var(--font-crimson-pro, ui-serif)"],
       },
       fontSize: {
         "2xs": [
