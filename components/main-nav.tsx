@@ -1,8 +1,10 @@
 "use client";
 
 import { cn } from "@/app/lib/utils";
+import { Popover } from "@/components/ui/popover";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const navItems = [
   { href: "/", label: "Vault" },
@@ -17,8 +19,8 @@ export function MainNav() {
         <Link className="shrink-0 text-xl font-medium" href="/">
           hoonnotes
         </Link>
-        <button className="block sm:hidden">Login</button>
-        <nav className="subheading hidden items-center gap-8 text-sm md:flex">
+        <MobileNav />
+        <nav className="hidden items-center gap-8 text-sm md:flex">
           {navItems.map((item) => (
             <NavItem key={item.href} href={item.href}>
               {item.label}
@@ -33,9 +35,11 @@ export function MainNav() {
 function NavItem({
   href,
   children,
+  className,
 }: {
   href: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   const pathname = usePathname();
   const isActive =
@@ -46,10 +50,36 @@ function NavItem({
       className={cn(
         "font-medium uppercase opacity-60 transition-opacity hover:opacity-100",
         isActive && "opacity-100",
+        className,
       )}
       href={href}
     >
       {children}
     </Link>
+  );
+}
+
+function MobileNav() {
+  const [openPopover, setOpenPopover] = useState(false);
+
+  return (
+    <Popover
+      mobileOnly
+      content={
+        <div className="flex w-full flex-col items-start justify-start gap-3">
+          {navItems.map((item) => (
+            <NavItem key={item.href} href={item.href} className="w-full px-6">
+              {item.label}
+            </NavItem>
+          ))}
+        </div>
+      }
+      openPopover={openPopover}
+      setOpenPopover={setOpenPopover}
+    >
+      <button className="text-sm font-medium uppercase opacity-60 transition-opacity hover:opacity-100">
+        Menu
+      </button>
+    </Popover>
   );
 }
