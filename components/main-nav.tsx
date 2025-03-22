@@ -20,7 +20,7 @@ export function MainNav() {
           hoonnotes
         </Link>
         <MobileNav />
-        <nav className="hidden items-center gap-8 text-sm md:flex">
+        <nav className="hidden items-center gap-8 text-sm sm:flex">
           {navItems.map((item) => (
             <NavItem key={item.href} href={item.href}>
               {item.label}
