@@ -1,5 +1,5 @@
-import { useMediaQuery } from "@/app/lib/hooks";
-import { cn } from "@/app/lib/utils";
+import { useMediaQuery } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { PropsWithChildren, ReactNode, WheelEventHandler } from "react";
 import { Drawer } from "vaul";

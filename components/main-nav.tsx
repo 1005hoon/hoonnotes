@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/app/lib/utils";
 import { Popover } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
