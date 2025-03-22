@@ -1,7 +1,7 @@
-import "@/app/styles/globals.css";
+import { crimsonPro, geistMono, inter, satoshi } from "@/app/styles/fonts";
 import { MainNav } from "@/components/main-nav";
 import { constructMetadata } from "@/lib/utils";
-import { crimsonPro, geistMono, inter, satoshi } from "@/styles/fonts";
+import "@/styles/globals.css";
 import { Viewport } from "next";
 
 export const metadata = constructMetadata();
