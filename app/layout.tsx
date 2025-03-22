@@ -1,4 +1,5 @@
 import "@/app/styles/globals.css";
+import { MainNav } from "@/components/main-nav";
 import { constructMetadata } from "@/lib/utils/functions";
 import { crimsonPro, geistMono, inter, satoshi } from "@/styles/fonts";
 import { Viewport } from "next";
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body
         className={`${satoshi.variable} ${inter.variable} ${geistMono.variable} ${crimsonPro.variable} antialiased`}
       >
+        <MainNav />
         {children}
       </body>
     </html>
