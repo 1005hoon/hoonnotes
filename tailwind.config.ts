@@ -194,6 +194,13 @@ const config: Config = {
           800: "#846358",
           900: "#43302b",
         },
+        background: { DEFAULT: "var(--background)" },
+        foreground: { DEFAULT: "var(--foreground)" },
+        accent: { DEFAULT: "var(--accent)" },
+        "accent-invert": { DEFAULT: "var(--accent-invert)" },
+        "cursor-base": { DEFAULT: "var(--cursor-base)" },
+        "scrollbar-thumb": { DEFAULT: "var(--scrollbar-thumb)" },
+        "scrollbar-track": { DEFAULT: "var(--scrollbar-track)" },
       },
       dropShadow: {
         "card-hover": ["0 8px 12px #222A350d", "0 32px 80px #2f30370f"],
