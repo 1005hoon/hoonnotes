@@ -5,7 +5,7 @@ import radix from "tailwindcss-radix";
 
 const config: Config = {
   content: ["./app/**/*.{js,ts,jsx,tsx,mdx}", "./ui/**/*.{js,ts,jsx,tsx,mdx}"],
-  darkMode: "class",
+  darkMode: "selector",
   theme: {
     extend: {
       fontFamily: {
