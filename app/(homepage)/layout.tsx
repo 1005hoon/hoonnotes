@@ -3,5 +3,5 @@ export default function HomeLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="px-4 pt-12">{children}</div>;
+  return <main>{children}</main>;
 }
