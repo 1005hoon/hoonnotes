@@ -1,0 +1,52 @@
+name: "🗺️ 로드맵 태스크"
+description: "프로젝트 로드맵의 태스크를 생성합니다"
+labels: ["roadmap"]
+projects: ["hoonnotes"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        이 템플릿은 프로젝트 로드맵의 태스크를 생성하고 자동으로 프로젝트 보드에 추가됩니다.
+
+  - type: input
+    id: feature-name
+    attributes:
+      label: 기능명
+      description: 구현할 기능의 이름을 간단히 작성해주세요
+      placeholder: "예: 사용자 인증 시스템"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: 작업 유형
+      description: 이 작업의 유형을 선택해주세요
+      options:
+        - "🏗️ 인프라"
+        - "⚡ 성능 개선"
+        - "✨ 새로운 기능"
+        - "🎨 UI/UX"
+        - "🔧 리팩토링"
+        - "📚 문서화"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 설명
+      description: 구현할 내용을 자세히 설명해주세요
+      placeholder: |
+        ## 목적
+        - 이 작업이 필요한 이유
+
+        ## 구현 범위
+        - [ ] 구현해야 할 항목 1
+        - [ ] 구현해야 할 항목 2
+
+        ## 기술적 고려사항
+        - 사용할 기술 스택
+        - 고려해야 할 제약사항
+    validations:
+      required: true

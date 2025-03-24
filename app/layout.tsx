@@ -3,12 +3,8 @@ import { MainNav } from "@/components/main-nav";
 import { Providers } from "@/components/providers";
 import { constructMetadata } from "@/lib/utils";
 import "@/styles/globals.css";
-import { Viewport } from "next";
 
 export const metadata = constructMetadata();
-export const viewport: Viewport = {
-  themeColor: "#ffcfaf",
-};
 
 export default function RootLayout({
   children,

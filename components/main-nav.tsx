@@ -6,7 +6,7 @@ export function MainNav() {
       <Link className="font-medium" href="/">
         Seunghoon Oh
       </Link>
-      <span className="text-gray-1000 font-medium">AI Product Engineer</span>
+      <span className="text-gray-1000 font-medium">Frontend Engineer</span>
     </header>
   );
 }

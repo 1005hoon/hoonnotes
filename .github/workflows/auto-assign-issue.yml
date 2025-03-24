@@ -1,0 +1,27 @@
+name: Auto Assign Issue Creator
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  auto-assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign repository owner as assignee
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.REPO_AUTOMATION_PAT }}
+          script: |
+            const owner = context.repo.owner;
+            const issueNumber = context.issue.number;
+
+            await github.rest.issues.addAssignees({
+              owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              assignees: [owner],
+            });

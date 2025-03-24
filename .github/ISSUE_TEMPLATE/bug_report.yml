@@ -1,0 +1,66 @@
+name: "🐞 버그 리포트"
+description: "버그를 리포트하려면 이 템플릿을 사용해주세요"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        버그를 리포트해 주셔서 감사합니다! 가능한 한 자세히 작성해 주시면 더 빠른 해결이 가능합니다.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 버그 설명
+      description: 어떤 버그가 발생했는지 자세히 설명해주세요.
+      placeholder: 버그가 어떻게 발생했는지 설명해주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 재현 방법
+      description: 버그를 재현하기 위한 단계를 설명해주세요.
+      placeholder: |
+        1. '...' 페이지로 이동
+        2. '...' 버튼 클릭
+        3. '...' 입력
+        4. 에러 발생
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 기대한 동작
+      description: 원래 어떻게 동작해야 했는지 설명해주세요.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 버전
+      description: 어떤 버전에서 발생했나요?
+      placeholder: "예: v1.0.0"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: 브라우저
+      description: 어떤 브라우저에서 발생했나요?
+      multiple: true
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - 기타
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 추가 정보
+      description: 스크린샷이나 에러 로그 등 추가 정보가 있다면 첨부해주세요.
