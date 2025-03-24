@@ -14,7 +14,7 @@ jobs:
       - name: Assign repository owner as assignee
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.REPO_AUTOMATION_PAT }}
           script: |
             const owner = context.repo.owner;
             const issueNumber = context.issue.number;
