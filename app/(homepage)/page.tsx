@@ -1,15 +1,20 @@
+import { TextLink } from "@/components/ui/text-link";
+
 export default function Home() {
   return (
     <>
-      <span className="mb-5 inline-block font-medium sm:mb-6">Today</span>
-      <p className="text-gray-1100 mb-4 sm:mb-5">
-        I work as a frontend engineer at SoftlyAI. My interests span a broad
-        spectrum of subjects, encompassing web development, marketing, and
-        human-computer interaction. Currently, I&apos;m developing a taste of
-        what it feels natural and bridging the gap between design and
-        engineering.
-      </p>
       <Section
+        href="/about"
+        title="Today"
+        description="I work as a frontend engineer at SoftlyAI. My interests span a broad
+        spectrum of subjects, encompassing web development, marketing, and
+        human-computer interaction. Currently, I'm developing a taste of
+        what it feels natural and bridging the gap between design and
+        engineering."
+      />
+
+      <Section
+        href="/vaults"
         title="Vaults"
         description="Things I've built and shipped"
         empty={
@@ -20,7 +25,8 @@ export default function Home() {
         }
       />
       <Section
-        title="Curated"
+        href="/thoughts"
+        title="Thoughts"
         description="Curated reflections on design, technology, and more"
         empty={
           <p className="text-gray-1000 italic">
@@ -39,15 +45,19 @@ function Section({
   description,
   children,
   empty,
+  href,
 }: {
   title: string;
   description?: string;
   children?: React.ReactNode;
   empty?: React.ReactNode;
+  href: string;
 }) {
   return (
     <div className="mt-16 sm:mt-32">
-      <h2 className="mb-5 inline-block font-medium sm:mb-6">{title}</h2>
+      <TextLink href={href} className="mb-5 inline-block font-medium sm:mb-6">
+        {title}
+      </TextLink>
       {description && (
         <p className="text-gray-1100 mb-4 sm:mb-5">{description}</p>
       )}
