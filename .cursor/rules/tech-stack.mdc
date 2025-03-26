@@ -8,34 +8,19 @@ alwaysApply: true
 ### Core Technologies
 - TypeScript, Node.js, Next.js 15 App Router
 - React 19 with React Server Components (RSC)
-- Supabase for backend, database, and authentication
+- Postgres as database and prisma as connector
 - Zod for schema validation and type safety
 - React Hook Form for form management
 - Shadcn UI with Tailwind CSS
+- Docker for development, test, and deploy
+- Cloud service using AWS
 
-### Architecture - Feature-Sliced Design (FSD)
-- Layer hierarchy (top to bottom):
-  - app/ - Application configuration
-  - views/ - Route pages and layouts (use views, rather than pages)
-  - widgets/ - Independent page blocks
-  - features/ - User interactions and business logic
-  - entities/ - Business entities (users, products)
-  - shared/ - Reusable infrastructure and UI
-- Rules:
-  - Each module exposes Public API via index.ts
-  - Modules only depend on lower layers
-  - Same-layer dependencies are prohibited
-  - Organize slices into ui/, model/, and lib/ segments
-  - Group by domains/ for business separation
-  - Develop features/entities in isolation
-
-### Backend - Supabase
-- Implement row-level security (RLS) policies
-- Define TypeScript types for tables and queries
-- Use PostgreSQL features (foreign keys, constraints)
-- Leverage realtime features for live updates
-- Version control database migrations
-- Utilize Edge Functions for serverless operations
+### Database Schema Requirements:
+- Follow OOP and DDD principles for a well-structured and maintainable database design.
+- Consider the relationships between different entities. 
+- Ensure data integrity and consistency through appropriate data types and constraints.
+- Provide clear table and column names that reflect the data they store.
+- Consider how to handle images
 
 ### Data Validation & Forms
 - Zod:

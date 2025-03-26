@@ -44,7 +44,9 @@ export function constructMetadata({
   manifest?: string | URL | null;
 } = {}): Metadata {
   return {
-    title: fullTitle || (title ? `${title} | hoonnotes` : "오승훈 | hoonnotes"),
+    title:
+      fullTitle ||
+      (title ? `${title} | hoonnotes` : "Seunghoon Oh | hoonnotes"),
     description,
     openGraph: {
       title,
