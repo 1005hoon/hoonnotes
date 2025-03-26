@@ -14,7 +14,7 @@ export default function Home() {
       />
 
       <Section
-        href="/vaults"
+        href="/projects"
         title="Vaults"
         description="Things I've built and shipped"
         empty={
@@ -25,7 +25,7 @@ export default function Home() {
         }
       />
       <Section
-        href="/thoughts"
+        href="/posts"
         title="Thoughts"
         description="Curated reflections on design, technology, and more"
         empty={
@@ -55,7 +55,7 @@ function Section({
 }) {
   return (
     <div className="mt-16 sm:mt-32">
-      <TextLink href={href} className="mb-5 inline-block font-medium sm:mb-6">
+      <TextLink href={href} className="mb-5 inline-block font-medium sm:mb-4">
         {title}
       </TextLink>
       {description && (

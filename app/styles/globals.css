@@ -13,7 +13,7 @@
   --gray-800: #bcbbb5;
   --gray-900: #8d8d86;
   --gray-1000: #82827c;
-  --gray-1100: #43423d;
+  --gray-1100: #63635e;
   --gray-1200: #21201c;
   --gray-alpha-100: #00000003;
   --gray-alpha-200: #00000006;
@@ -199,5 +199,40 @@
   ::-webkit-scrollbar-track {
     background-color: transparent;
     border-radius: 9999px;
+  }
+}
+
+@supports (view-transition-name: none) {
+  @media not (prefers-reduced-motion: reduce) {
+    ::view-transition-old(crossfade) {
+      animation: hide 0.4s cubic-bezier(0.6, 0, 0.8, 1) forwards;
+    }
+
+    ::view-transition-new(crossfade) {
+      opacity: 0;
+      animation: appear 0.6s ease 0.2s forwards;
+    }
+  }
+}
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
   }
 }
