@@ -1,33 +1,33 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @source "../mdx-components.tsx";
 
 @layer utilities {
   .font-thin {
-    font-variation-settings: 'wght' 100, var(--sans-variation);
+    font-variation-settings: "wght" 100, var(--sans-variation);
   }
   .font-extralight {
-    font-variation-settings: 'wght' 200, var(--sans-variation);
+    font-variation-settings: "wght" 200, var(--sans-variation);
   }
   .font-light {
-    font-variation-settings: 'wght' 300, var(--sans-variation);
+    font-variation-settings: "wght" 300, var(--sans-variation);
   }
   .font-normal {
-    font-variation-settings: 'wght' 440, var(--sans-variation);
+    font-variation-settings: "wght" 440, var(--sans-variation);
   }
   .font-medium {
-    font-variation-settings: 'wght' 500, var(--sans-variation);
+    font-variation-settings: "wght" 500, var(--sans-variation);
   }
   .font-semibold {
-    font-variation-settings: 'wght' 600, var(--sans-variation);
+    font-variation-settings: "wght" 600, var(--sans-variation);
   }
   .font-bold {
-    font-variation-settings: 'wght' 640, var(--sans-variation);
+    font-variation-settings: "wght" 640, var(--sans-variation);
   }
   .font-extrabold {
-    font-variation-settings: 'wght' 700, var(--sans-variation);
+    font-variation-settings: "wght" 700, var(--sans-variation);
   }
   .font-black {
-    font-variation-settings: 'wght' 800, var(--sans-variation);
+    font-variation-settings: "wght" 800, var(--sans-variation);
   }
 }
 
@@ -47,14 +47,14 @@
   --color-rurikon-border: #d8dbdfb3;
 
   --font-family-sans: var(--sans), -apple-system, ui-sans-serif, system-ui,
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-    'Noto Color Emoji';
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
   --font-family-serif: var(--serif), ui-serif, Georgia, Cambria,
-    'Times New Roman', Times, serif;
+    "Times New Roman", Times, serif;
   --font-family-mono: var(--mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, 'Liberation Mono', 'Courier New', monospace;
-  --font-family-zh: var(--sans), -apple-system, ui-sans-serif, system-ui,
-    'PingFang SC', 'Hiragino Sans GB', 'Source Han Sans CN', sans-serif;
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-family-ko: var(--sans), -apple-system, ui-sans-serif, system-ui,
+    "PingFang SC", "Hiragino Sans GB", "Source Han Sans CN", sans-serif;
 
   --breakpoint-text: 1220px;
   --breakpoint-mobile: 420px;
@@ -65,18 +65,18 @@
 }
 
 :root {
-  --sans-variation: 'opsz' 32;
-  --font-features: 'cpsp' 1, 'cv01', 'cv03', 'cv04', 'calt', 'ss03',
-    'liga', 'ordn';
+  --sans-variation: "opsz" 32;
+  --font-features: "cpsp" 1, "cv01", "cv03", "cv04", "calt", "ss03", "liga",
+    "ordn";
 }
 
 body {
   font-synthesis: none;
   font-family: var(--sans), system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
     sans-serif;
   font-feature-settings: var(--font-features);
-  font-variation-settings: 'wght' 440, var(--sans-variation);
+  font-variation-settings: "wght" 440, var(--sans-variation);
   font-variant: common-ligatures contextual;
   text-decoration-skip-ink: auto;
   text-spacing-trim: space-first;
@@ -96,11 +96,11 @@ em,
 blockquote,
 nav,
 .sidenote {
-  font-family: var(--serif), Baskerville, Georgia, Cambria, 'Times New Roman',
+  font-family: var(--serif), Baskerville, Georgia, Cambria, "Times New Roman",
     Times, serif;
   font-style: initial;
   font-optical-sizing: auto;
-  font-variation-settings: 'wght' 480, var(--sans-variation);
+  font-variation-settings: "wght" 480, var(--sans-variation);
   font-weight: 400;
   font-variant-ligatures: contextual;
   letter-spacing: -0.006em;
@@ -149,7 +149,7 @@ pre code {
 
 code {
   font-family: var(--mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, 'Liberation Mono', 'Courier New', monospace;
+    Consolas, "Liberation Mono", "Courier New", monospace;
   word-spacing: -0.15em;
 
   /* background: var(--color-rurikon-50); */
@@ -192,7 +192,8 @@ article {
       margin: 0;
     }
   }
-  .framed > img, .framed > figure > span:first-child {
+  .framed > img,
+  .framed > figure > span:first-child {
     padding: var(--frame-padding, 0.875rem);
     background: var(--frame-background, #fff);
     border: 1px solid var(--color-rurikon-border);
@@ -209,11 +210,11 @@ article {
     border-bottom: 1px solid var(--color-rurikon-border);
   }
   details summary {
-    font-variation-settings: 'wght' 600, var(--sans-variation);
+    font-variation-settings: "wght" 600, var(--sans-variation);
     margin-bottom: 0.25rem;
   }
   details summary::marker {
-    content: '';
+    content: "";
   }
   details p:first-of-type {
     margin-top: 0;
@@ -238,7 +239,7 @@ article {
 }
 
 .dot-leaders::after {
-  content: '······································································';
+  content: "······································································";
 }
 
 @supports (view-transition-name: none) {
@@ -249,7 +250,7 @@ article {
 
     ::view-transition-new(crossfade) {
       opacity: 0;
-      animation: appear .6s ease 0.2s forwards;
+      animation: appear 0.6s ease 0.2s forwards;
     }
   }
 }

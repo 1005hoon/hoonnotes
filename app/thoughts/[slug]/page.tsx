@@ -4,6 +4,7 @@ import path from "path";
 import cn from "clsx";
 
 import { SITE_URL } from "@/app/constant";
+import JsonLd from "@/components/json-ld";
 
 export default async function Page(props: {
   params: Promise<{
@@ -15,12 +16,38 @@ export default async function Page(props: {
     "../_articles/" + `${params.slug}.mdx`
   );
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: metadata.title,
+    description: metadata.description,
+    author: {
+      "@type": "Person",
+      name: "Hoon Oh",
+      url: SITE_URL,
+    },
+    datePublished: metadata.date,
+    dateModified: metadata.date,
+    publisher: {
+      "@type": "Person",
+      name: "Hoon Oh",
+      url: SITE_URL,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/thoughts/${params.slug}`,
+    },
+    articleSection: "Thoughts",
+    inLanguage: metadata.korean ? "ko-KR" : "en-US",
+  };
+
   return (
     <div
-      className={cn(metadata.chinese && "text-justify font-zh")}
-      lang={metadata.chinese ? "zh-Hans" : "en"}
+      className={cn(metadata.korean && "text-justify font-ko")}
+      lang={metadata.korean ? "ko-KR" : "en"}
     >
       <MDXContent />
+      <JsonLd data={jsonLd} />
     </div>
   );
 }
