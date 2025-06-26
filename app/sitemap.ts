@@ -1,10 +1,11 @@
-import { MetadataRoute } from "next";
-import path from "path";
 import { promises as fs } from "fs";
+import path from "path";
+
+import { MetadataRoute } from "next";
+
+import { SITE_URL } from "@/app/constant";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const SITE_URL = "https://hoonnotes.com";
-
   const STATIC_ROUTES = ["/", "/thoughts", "/projects"].map((route) => ({
     url: `${SITE_URL}${route}`,
     lastModified: new Date(),

@@ -1,6 +1,9 @@
 import { promises as fs } from "fs";
 import path from "path";
+
 import cn from "clsx";
+
+import { SITE_URL } from "@/app/constant";
 
 export default async function Page(props: {
   params: Promise<{
@@ -41,8 +44,6 @@ export async function generateMetadata(props: {
     slug: string;
   }>;
 }) {
-  const SITE_URL = "https://hoonnotes.com";
-
   const params = await props.params;
   const metadata = (await import("../_articles/" + `${params.slug}.mdx`))
     .metadata;
