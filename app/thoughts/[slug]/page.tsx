@@ -12,8 +12,10 @@ export default async function Page(props: {
   }>;
 }) {
   const params = await props.params;
+  const decodedSlug = decodeURIComponent(params.slug);
+
   const { default: MDXContent, metadata } = await import(
-    "../_articles/" + `${params.slug}.mdx`
+    "../_articles/" + `${decodedSlug}.mdx`
   );
 
   const jsonLd = {
@@ -72,7 +74,9 @@ export async function generateMetadata(props: {
   }>;
 }) {
   const params = await props.params;
-  const metadata = (await import("../_articles/" + `${params.slug}.mdx`))
+  const decodedSlug = decodeURIComponent(params.slug);
+
+  const metadata = (await import("../_articles/" + `${decodedSlug}.mdx`))
     .metadata;
 
   return {
@@ -81,7 +85,7 @@ export async function generateMetadata(props: {
     openGraph: {
       title: metadata.title,
       description: metadata.description,
-      url: `${SITE_URL}/thoughts/${params.slug}`,
+      url: `${SITE_URL}/thoughts/${decodedSlug}`,
       siteName: "hoonnotes.com",
       // TODO: add dynamic og image
       // images: [{ url: `${siteUrl}/images/${params.slug}.png`, width: 800, height: 600 }]

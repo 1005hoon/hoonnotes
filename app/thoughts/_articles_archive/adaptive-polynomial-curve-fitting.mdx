@@ -1,8 +1,9 @@
 export const metadata = {
   title: "Adaptive Polynomial Curve Fitting",
   date: "2022.08.31",
-  description: "A simple way to find a good polynomial regression curve and avoid overfitting.",
-}
+  description:
+    "A simple way to find a good polynomial regression curve and avoid overfitting.",
+};
 
 # Adaptive Polynomial Curve Fitting
 
@@ -14,17 +15,24 @@ This article is also published on Vercel’s Engineering Blog: [_Curve fitting f
 
 Last month I worked on a side project internally at Vercel, to improve the data visualization of our [Analytics Charts](https://vercel.com/analytics). Previously, all the data points were visualized by simply connecting them as a line:
 
-<div className="framed">![Old analytics chart](analytics-old.png "Our old analytics visualization.")</div>
+<div className="framed">
+  ![Old analytics chart](analytics-old.png "Our old analytics visualization.")
+</div>
 
 It’s hard to read the **trend** from that chart because it’s too noisy. And the delta showed a -0.15s decrease, which clearly felt wrong. With the improvement introduced, it now uses a smooth curve to visualize the trend and measures the delta more accurately:
 
-<div className="framed">![New analytics chart](analytics-new.png "Improved chart with the same data.")</div>
+<div className="framed">
+  ![New analytics chart](analytics-new.png "Improved chart with the same data.")
+</div>
 
 ## The Challenge
 
 There are two main issues with the old visualization. First, it displays **all** data points on the chart and this makes the chart noisy. Second, the delta number was calculated by subtracting the last and first sampled data, which is quite unreasonable:
 
-<div className="framed [--frame-background:#6b6c69]">![Old analytics chart with first and last data points highlighted](analytics-old-2.png)</div>
+<div className="framed [--frame-background:#6b6c69]">
+  ![Old analytics chart with first and last data points
+  highlighted](analytics-old-2.png)
+</div>
 
 While it shows “-0.15”, all the data in between were completely ignored. As long as the most recent data point behaves better (could be one visitor with an extremely good network connection), the chart will conclude that my website is performing well.
 
@@ -34,16 +42,27 @@ After some research, I found that [curve fitting](https://en.wikipedia.org/wiki/
 
 To demonstrate, I built an example that uses the [palmerpenguins dataset](https://allisonhorst.github.io/palmerpenguins) to visualize the relationship between the bill length and depth of sampled penguins. It’s a bit noisy just like our Analytics chart:
 
-<BlockSideTitle title={<>
-  Example dataset: penguin’s bill length vs. depth. (<a href="https://allisonhorst.github.io/palmerpenguins">data source</a>)
-</>}>
-  <iframe src="https://observablehq.com/embed/@shu/plot-regression?cells=RegressionLinear" className="max-h-[440px] aspect-[5/4]"/>
+<BlockSideTitle
+  title={
+    <>
+      Example dataset: penguin’s bill length vs. depth. (
+      <a href="https://allisonhorst.github.io/palmerpenguins">data source</a>)
+    </>
+  }
+>
+  <iframe
+    src="https://observablehq.com/embed/@shu/plot-regression?cells=RegressionLinear"
+    className="max-h-[440px] aspect-[5/4]"
+  />
 </BlockSideTitle>
 
 There are many existing algorithms to calculate the fitting curve for a given set of data points if you already know the type of curve that you are looking for. The easiest way is to do a [linear regression](https://en.wikipedia.org/wiki/Linear_regression): finding a straight line to describe the data:
 
 <figure>
-  <iframe src="https://observablehq.com/embed/@shu/plot-regression?cells=Regression%2Cviewof+param%2Cequation" className="max-h-[555px] aspect-[12/17]"/>
+  <iframe
+    src="https://observablehq.com/embed/@shu/plot-regression?cells=Regression%2Cviewof+param%2Cequation"
+    className="max-h-[555px] aspect-[12/17]"
+  />
 </figure>
 
 Linear regression is just a special case of [polynomial regression](https://en.wikipedia.org/wiki/Polynomial_regression) where the order is 1. You can drag the slider above to see how different polynomial orders affect the fitting curve.
@@ -52,7 +71,7 @@ When the **order** is N, the polynomial function will have a degree of N, and th
 
 And the [MSE (mean squared error)](https://en.wikipedia.org/wiki/Mean_squared_error) value measures the goodness of the fit of the curve to the data, by definition it’s:
 
-<BlockMath math="\operatorname{MSE} = \sum{\frac{(\operatorname{Value} - \operatorname{PredictedValue})^2}{\operatorname{DataCount}}}"/>
+<BlockMath math="\operatorname{MSE} = \sum{\frac{(\operatorname{Value} - \operatorname{PredictedValue})^2}{\operatorname{DataCount}}}" />
 
 The smaller the error is, the better the curve describes the given data.
 
@@ -63,7 +82,10 @@ As you might notice, a **higher order** will result in a more “accurate” cur
 You can play with the example below: it generates fake data points with some normal distributed randomness and then calculates the regression curve for it. For the “Constant” data set, it’s better to just use a straight line to fit (<InlineMath math="\operatorname{order} = 1"/>). However, for the “Quadratic” data set, selecting <InlineMath math="\operatorname{order} = 2"/> will result in a better curve (and it’s stable).
 
 <figure>
-  <iframe className="max-h-[570px] aspect-[12/17]" src="https://observablehq.com/embed/@shu/plot-regression?cells=RegressionLinear1%2Cviewof+rOrder%2Cviewof+rData%2Cviewof+rType"/>
+  <iframe
+    className="max-h-[570px] aspect-[12/17]"
+    src="https://observablehq.com/embed/@shu/plot-regression?cells=RegressionLinear1%2Cviewof+rOrder%2Cviewof+rData%2Cviewof+rType"
+  />
 </figure>
 
 ## The Good Fit
@@ -75,18 +97,44 @@ That is, a very foundational concept in Machine Learning and Data Science, to sp
 In our real-world problem, we don’t actually have a training set and a test set (we can’t generate these random data) and all we have are the numbers collected from our production. But we can simply choose some data points as the training set, and the remaining ones become the test set. To make the algorithm determinisitic, I splitted our points by odd and even indexes.
 
 <figure>
-  <iframe className="max-h-[608px] aspect-[2/3]" src="https://observablehq.com/embed/@shu/plot-regression?cells=Regression1%2Cviewof+orderT%2Cequation2"/>
+  <iframe
+    className="max-h-[608px] aspect-[2/3]"
+    src="https://observablehq.com/embed/@shu/plot-regression?cells=Regression1%2Cviewof+orderT%2Cequation2"
+  />
 </figure>
 
-export const trainingSet = <span style={{ width: 10, height: 10, borderRadius: 10, background: 'steelblue', display: 'inline-block' }}/>
-export const testSet = <span style={{ width: 10, height: 10, borderRadius: 10, background: 'orange', display: 'inline-block' }}/>
+export const trainingSet = (
+  <span
+    style={{
+      width: 10,
+      height: 10,
+      borderRadius: 10,
+      background: "steelblue",
+      display: "inline-block",
+    }}
+  />
+);
+export const testSet = (
+  <span
+    style={{
+      width: 10,
+      height: 10,
+      borderRadius: 10,
+      background: "orange",
+      display: "inline-block",
+    }}
+  />
+);
 
 As shown in the example above, we use the {trainingSet} **training set** to calculate the fitting curve and measure the error for both the {trainingSet} **training set** and {testSet} **test set**. If you increase the order, the curve tries to follow the {trainingSet} points, but the gray lines show the error for {testSet} points.
 
 Ideally, a good fit should have a low error for both sets, as it shouldn’t be overfitting only the training set. Hence we use a simple but intuitive equation <InlineMath math="\operatorname{error}=max(\operatorname{MSE}(\operatorname{TrainingSet}), \operatorname{MSE}(\operatorname{TestSet}))"/> to measure the “overall goodness” of the fit for the entire data set. Usually, when we increase the order of the polynomial regression, the error will decrease (underfitting), hit a good fit, then increase again (overfitting).
 
 <figure>
-  <iframe className="aspect-[11/8]" src="https://observablehq.com/embed/@shu/plot-regression?cells=error"/>
+  <iframe
+    className="aspect-[11/8]"
+    src="https://observablehq.com/embed/@shu/plot-regression?cells=error"
+  />
 </figure>
 
 This chart shows the overall error when the polynomial regression order increases. It’s clear that when the order is 2, we have the best fit for the entire data which is what we can feel intuitively from the interactive example.
