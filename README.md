@@ -1,6 +1,6 @@
-# hoonnotes.com
+# hoonnotes.me
 
-Source of my personal website: [https://hoonnotes.com](https://hoonnotes.com).
+Source of my personal website: [https://hoonnotes.me](https://hoonnotes.me).
 
 - Next.js v15
 - MDX Rust & Shiki inside React Server Components
