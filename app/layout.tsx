@@ -7,8 +7,10 @@ import cn from "clsx";
 import localFont from "next/font/local";
 import "katex/dist/katex.min.css";
 
+import PageViewTracker from "@/components/page-view-tracker";
 import Navbar from "@/components/navbar";
 import "./globals.css";
+import Script from "next/script";
 
 const sans = localFont({
   src: "./_fonts/InterVariable.woff2",
@@ -47,8 +49,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gtmId = process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID;
+
   return (
     <html lang="en" className="overflow-x-hidden touch-manipulation">
+      <head>{gtmId && <GTMHead gtmId={gtmId} />}</head>
+      <PageViewTracker />
       <body
         className={cn(
           sans.variable,
@@ -60,6 +66,7 @@ export default function RootLayout({
           "antialiased"
         )}
       >
+        {gtmId && <GTMBody gtmId={gtmId} />}
         <div className="fixed sm:hidden h-6 sm:h-10 md:h-14 w-full top-0 left-0 z-30 pointer-events-none content-fade-out" />
         <div className="flex flex-col mobile:flex-row">
           <Navbar />
@@ -74,5 +81,38 @@ export default function RootLayout({
         </div>
       </body>
     </html>
+  );
+}
+
+function GTMHead({ gtmId }: { gtmId: string }) {
+  if (!gtmId) return <></>;
+
+  return (
+    <Script
+      id="gtm-script"
+      strategy="beforeInteractive"
+      dangerouslySetInnerHTML={{
+        __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','${gtmId}')`,
+      }}
+    />
+  );
+}
+
+function GTMBody({ gtmId }: { gtmId: string }) {
+  if (!gtmId) return <></>;
+
+  return (
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+        height="0"
+        width="0"
+        style={{ display: "none", visibility: "hidden" }}
+      />
+    </noscript>
   );
 }
