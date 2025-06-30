@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 
 // @ts-expect-error types are not available yet?
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { Suspense, unstable_ViewTransition as ViewTransition } from "react";
 
 import cn from "clsx";
 import localFont from "next/font/local";
@@ -54,7 +54,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="overflow-x-hidden touch-manipulation">
       <head>{gtmId && <GTMHead gtmId={gtmId} />}</head>
-      <PageViewTracker />
+      <Suspense fallback={null}>
+        <PageViewTracker />
+      </Suspense>
       <body
         className={cn(
           sans.variable,
