@@ -45,7 +45,7 @@ export default async function Page(props: {
 
   return (
     <div
-      className={cn(metadata.korean && "text-justify font-ko")}
+      className={cn(metadata.korean && "text-justify font-ko break-keep")}
       lang={metadata.korean ? "ko-KR" : "en"}
     >
       <MDXContent />
