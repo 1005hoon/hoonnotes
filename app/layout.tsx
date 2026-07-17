@@ -9,6 +9,7 @@ import "katex/dist/katex.min.css";
 
 import PageViewTracker from "@/components/page-view-tracker";
 import Navbar from "@/components/navbar";
+import { SITE_URL } from "@/app/constant";
 import "./globals.css";
 import Script from "next/script";
 
@@ -31,11 +32,24 @@ const mono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     template: "%s - hoonnotes",
     default: "hoonnotes",
   },
-  description: "Product developer",
+  description:
+    "Hoon Oh — frontend engineer at HealingPaper. Notes on frontend engineering, product, and teams.",
+  alternates: {
+    canonical: "./",
+  },
+  openGraph: {
+    siteName: "hoonnotes",
+    type: "website",
+    url: "./",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export const viewport: Viewport = {

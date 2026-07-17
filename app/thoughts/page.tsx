@@ -5,6 +5,8 @@ import path from "path";
 
 export const metadata = {
   title: "Thoughts",
+  description:
+    "Writings by Hoon Oh on frontend engineering, product, teams, and monthly retrospectives.",
 };
 
 // In the future we can have a pagination here e.g. /1/*.mdx

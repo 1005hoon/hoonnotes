@@ -3,13 +3,6 @@ import { NextConfig } from 'next'
 
 export default withMDX()({
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
-  redirects: async () => [
-    {
-      source: '/posts/:slug',
-      destination: '/thoughts/:slug',
-      permanent: false,
-    },
-  ],
   experimental: {
     viewTransition: true,
     mdxRs: {

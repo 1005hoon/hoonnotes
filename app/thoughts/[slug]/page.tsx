@@ -18,6 +18,8 @@ export default async function Page(props: {
     "../_articles/" + `${decodedSlug}.mdx`
   );
 
+  const isoDate = metadata.date?.replaceAll(".", "-");
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -27,9 +29,13 @@ export default async function Page(props: {
       "@type": "Person",
       name: "Hoon Oh",
       url: SITE_URL,
+      sameAs: [
+        "https://github.com/1005hoon",
+        "https://www.linkedin.com/in/1005hoon",
+      ],
     },
-    datePublished: metadata.date,
-    dateModified: metadata.date,
+    datePublished: isoDate,
+    dateModified: isoDate,
     publisher: {
       "@type": "Person",
       name: "Hoon Oh",
@@ -62,9 +68,7 @@ export async function generateStaticParams() {
   return articles
     .filter((name) => name.endsWith(".mdx"))
     .map((name) => ({
-      params: {
-        slug: name.replace(/\.mdx$/, ""),
-      },
+      slug: name.replace(/\.mdx$/, ""),
     }));
 }
 
@@ -82,21 +86,23 @@ export async function generateMetadata(props: {
   return {
     title: metadata.title,
     description: metadata.description,
+    alternates: {
+      canonical: `${SITE_URL}/thoughts/${decodedSlug}`,
+    },
     openGraph: {
       title: metadata.title,
       description: metadata.description,
       url: `${SITE_URL}/thoughts/${decodedSlug}`,
-      siteName: "hoonnotes.com",
-      // TODO: add dynamic og image
-      // images: [{ url: `${siteUrl}/images/${params.slug}.png`, width: 800, height: 600 }]
+      siteName: "hoonnotes",
       type: "article",
+      publishedTime: metadata.date?.replaceAll(".", "-"),
+      authors: ["Hoon Oh"],
+      locale: metadata.korean ? "ko_KR" : "en_US",
     },
     twitter: {
       card: "summary_large_image",
       title: metadata.title,
       description: metadata.description,
-      // TODO: add dynamic twitter image
-      // images: [`${siteUrl}/images/${params.slug}.png`],
     },
   };
 }
