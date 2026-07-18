@@ -35,6 +35,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# blog drafts (raw dumps, not for public repo)
+/drafts/
+
+# claude code (skills, local settings)
+/.claude/
+
 # v0
 .v0-store
 
