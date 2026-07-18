@@ -11,7 +11,6 @@ import PageViewTracker from "@/components/page-view-tracker";
 import Navbar from "@/components/navbar";
 import { SITE_URL } from "@/app/constant";
 import "./globals.css";
-import Script from "next/script";
 
 const sans = localFont({
   src: "./_fonts/InterVariable.woff2",
@@ -104,9 +103,7 @@ function GTMHead({ gtmId }: { gtmId: string }) {
   if (!gtmId) return <></>;
 
   return (
-    <Script
-      id="gtm-script"
-      strategy="beforeInteractive"
+    <script
       dangerouslySetInnerHTML={{
         __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
