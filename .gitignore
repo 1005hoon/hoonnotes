@@ -41,6 +41,12 @@ next-env.d.ts
 # claude code (skills, local settings)
 /.claude/
 
+# local AI writing workflow (personal know-how)
+/AGENTS.md
+/CLAUDE.md
+/.agents/
+/.writing/
+
 # v0
 .v0-store
 
