@@ -1,0 +1,209 @@
+export const metadata = {
+  title: "에러 처리의 예측 가능성 높이기",
+  date: "2026.07.23",
+  description: "타입에 드러나지 않던 실패를 반환값으로 옮기고, 구현을 읽지 않아도 함수가 어떻게 실패할 수 있는지 알게 만드는 방법을 살펴봅니다.",
+  korean: true,
+};
+
+# 에러 처리의 예측 가능성 높이기
+
+개발하다 보면 여러 비동기 작업을 하나의 `try/catch`로 감싸는 코드를 자주 만나게 된다. 상품과 쿠폰을 조회하고 결제를 요청하는 주문 코드도 어렵지 않게 다음과 같은 모습이 된다.
+
+```ts
+async function handleOrderSubmit(command: PlaceOrderCommand) {
+  try {
+    const product = await findProduct(command.productId);
+    const coupon = await findCoupon(command.couponId);
+    const order = await placeOrder({
+      command,
+      product,
+      coupon,
+    });
+
+    showOrderCompleted(order);
+  } catch (cause: unknown) {
+    reportError(cause);
+    showOrderFailed();
+  }
+}
+```
+
+코드의 의도는 분명하다. 세 작업 가운데 하나라도 실패하면 오류를 기록하고 공통 실패 화면을 보여준다. 아직 실패 원인마다 다른 처리가 필요하지 않다면 이 정도로도 충분히 제 역할을 한다. 이 예시에서 상품과 쿠폰을 먼저 조회하는 과정은 클라이언트의 흐름을 설명하기 위해 단순화한 것이며, 실제 주문에서는 서버가 재고와 가격, 쿠폰의 유효성을 다시 검증해야 한다.
+
+그런데 `catch`에서 오류를 조금 더 구체적으로 처리하려는 순간 이야기가 달라진다. 세 함수 중 어느 함수가 예외를 던질 수 있을까? 재고가 부족하면 `findProduct`가 던질까, `placeOrder`가 던질까? 결제에 실패했을 때 잡히는 값은 일반적인 `Error`일까, 결제 SDK가 정의한 객체일까?
+
+`try/catch`는 예외가 어디에서 모이는지는 잘 보여준다. 정작 그 안에서 어떤 실패가 일어날 수 있는지는 거의 말해주지 않는다.
+
+## try-catch 안에서 무슨 일이 일어나는가
+
+그렇다면 각 함수의 시그니처에서는 답을 찾을 수 있을까? 타입 정의를 열어보면 다음과 같이 생겼을 가능성이 높다.
+
+```ts
+declare function findProduct(
+  productId: string,
+): Promise<Product>;
+
+declare function findCoupon(
+  couponId: string,
+): Promise<Coupon>;
+
+declare function placeOrder(
+  input: PlaceOrderInput,
+): Promise<Order>;
+```
+
+세 함수는 타입만 놓고 보면 모두 성공 값을 비동기로 반환한다. `findProduct`가 재고 부족을 던지는지, `findCoupon`이 만료된 쿠폰을 던지는지, `placeOrder`가 결제 오류를 그대로 전달하는지는 어디에도 나타나지 않는다. TypeScript의 함수 시그니처는 반환할 값의 타입은 표현하지만, 던질 수 있는 예외의 목록까지 표현하지는 않기 때문이다.
+
+결국 개발자는 `findProduct`의 구현을 열어본다. 그 안에서 다른 함수를 호출하고 있다면 다시 그 구현으로 이동하고, 외부 라이브러리를 만났다면 문서를 찾아보거나 실제 동작을 확인한다. 오류를 처리하는 코드 몇 줄을 작성하기 위해 호출 경로를 거꾸로 따라가는 셈이다.
+
+우리가 구현을 열어보게 되는 이유는 구현이 복잡해서가 아니다. 호출자가 알아야 할 실패 정보가 함수의 타입에 없기 때문이다.
+
+커스텀 `Error`와 `instanceof`를 사용하면 이 문제가 해결되는 것처럼 보일 수도 있다. 물론 이미 잡은 오류가 `PaymentDeclinedError`인지 구분하는 일은 쉬워진다. 하지만 그 코드를 작성하려면 `placeOrder`가 `PaymentDeclinedError`를 던진다는 사실을 먼저 알고 있어야 한다. 런타임에서 오류를 구분하는 방법은 생겼지만, 호출자가 가능한 실패를 발견하는 방법은 그대로다.
+
+## 타입에 없는 정보는 어디에 남을까
+
+함수의 타입이 말해주지 않는 정보는 대개 개발자의 머릿속이나 팀의 관습으로 옮겨간다. 이 함수는 실패할 수 있고, 실패하면 이런 형태의 값을 던지며, 내부에서 사용하는 라이브러리도 같은 규칙을 따를 것이라는 식이다. 호출자가 함수를 제대로 사용하려면 알아야 하지만 함수의 계약에는 적혀 있지 않다. 실패 계약이 존재하면서도 암묵적인 지식으로만 남은 셈이다.
+
+이런 암묵적인 지식이 언제나 틀리는 것은 아니다. 코드를 처음 만든 사람에게는 함수가 어떻게 실패하는지 분명하고, 오랫동안 함께 일한 팀이라면 별다른 설명 없이도 같은 규칙을 공유할 수 있다. 문제는 시간이 지나 구현이 바뀌거나 새로운 사람이 함수를 호출할 때 생긴다. 함수의 계약에 남지 않은 맥락을 복원하기 위해 다시 코드를 읽어야 하기 때문이다.
+
+암묵적인 실패 계약은 변경에도 약하다. `placeOrder`가 결제 거절만 던지다가 추가 인증이 필요하다는 오류도 던지기 시작했다고 해보자. 구현에서 다루는 실패는 하나 늘었지만 반환 타입은 여전히 `Promise<Order>`다. 기존 호출부는 새 실패를 처리하지 않은 채로도 아무 일 없이 컴파일된다.
+
+예외 목록을 문서에 적어두면 어느 정도 도움은 된다. 하지만 문서는 함수와 함께 타입 검사되지 않는다. 구현, 문서, 호출부가 같은 약속을 공유해야 하는데, 그중 하나가 바뀌었다고 해서 나머지에 신호가 전달되지는 않는다. 결국 누군가는 변경을 기억하고 관련된 호출부를 직접 찾아야 한다.
+
+그렇다면 실패에 관한 정보를 문서나 기억이 아니라 함수 자체에 남길 수는 없을까?
+
+## 실패도 함수가 반환하는 값이다
+
+예외를 더 잘 잡는 방법만 생각하면 이 질문에 답하기 어렵다. 실패를 예외가 아니라 함수가 반환할 수 있는 값의 한 종류로 보면 선택지가 달라진다.
+
+```ts
+type PlaceOrderFailure =
+  | { type: "OUT_OF_STOCK" }
+  | { type: "INVALID_COUPON" }
+  | { type: "PAYMENT_DECLINED" }
+  | { type: "PAYMENT_UNAVAILABLE" };
+
+declare function placeOrder(
+  input: PlaceOrderInput,
+): ResultAsync<Order, PlaceOrderFailure>;
+```
+
+이제 `placeOrder`의 시그니처에는 성공 값과 실패 값이 함께 나타난다. 주문에 성공하면 `Order`를 얻고, 실패하면 `PlaceOrderFailure`에 정의된 네 가지 값 중 하나를 얻는다. 호출자는 구현을 열지 않아도 이 함수가 실패할 수 있다는 사실과 어떤 실패를 약속하는지 알 수 있다.
+
+성공과 실패를 값으로 표현하기 위해 반드시 특정 라이브러리가 필요한 것은 아니다. 판별 가능한 유니온으로 직접 만들 수도 있고 프로젝트에 맞는 `Result` 타입을 정의할 수도 있다. 이 글에서는 실패 계약을 비동기 코드에 표현하는 구현 수단으로 [neverthrow](https://github.com/supermacro/neverthrow)의 `ResultAsync`를 사용한다. 여기서 중요한 것은 라이브러리 이름보다 `ResultAsync<T, E>`의 `E`가 함수의 실패 정보를 타입 안에 남겨준다는 점이다.
+
+그렇다고 모든 함수의 예외를 `Result`로 바꾸는 것이 항상 이득인 것은 아니다. 호출자가 실패를 구분해 복구할 필요가 없고 가까운 경계에서 같은 방식으로 종료한다면, 실패 타입과 변환 코드를 유지하는 비용이 더 클 수 있다. 반대로 실패에 따라 호출자의 행동이 달라지거나 그 실패가 모듈의 경계를 넘어 전달된다면, 계약을 타입에 남겨 얻는 이점이 커진다. `Result`는 예외를 대체하는 기본 문법이라기보다 호출자와 실패에 관한 약속을 공유해야 할 때 선택할 수 있는 도구에 가깝다.
+
+물론 아무 오류나 `E`에 넣는다고 좋은 계약이 되는 것은 아니다. 결제 클라이언트의 내부 오류를 주문 함수가 그대로 노출하면 호출자는 다시 자신과 관계없는 구현 세부 사항을 알아야 한다. 그래서 실패도 함수의 경계를 지날 때 현재 맥락의 언어로 번역할 필요가 있다.
+
+```ts
+type PaymentClientError =
+  | { code: "PAYMENT_DECLINED" }
+  | { code: "REQUEST_TIMEOUT" };
+
+interface PaymentClient {
+  pay(
+    input: PaymentInput,
+  ): ResultAsync<Order, PaymentClientError>;
+}
+
+function placeOrder(
+  input: PlaceOrderInput,
+): ResultAsync<Order, PlaceOrderFailure> {
+  // 재고와 쿠폰 검사는 생략한다.
+  const paymentInput = toPaymentInput(input);
+
+  return paymentClient
+    .pay(paymentInput)
+    .mapErr((error) => {
+      if (error.code === "PAYMENT_DECLINED") {
+        return { type: "PAYMENT_DECLINED" } as const;
+      }
+
+      return { type: "PAYMENT_UNAVAILABLE" } as const;
+    });
+}
+```
+
+이 코드에서 눈여겨볼 부분은 `mapErr` 자체가 아니다. `toPaymentInput`은 주문 유스케이스의 입력을 결제 클라이언트의 입력으로 바꾸고, `mapErr`는 결제 클라이언트의 실패를 주문 흐름의 실패로 바꾼다. 입력과 실패를 모두 명시적으로 번역해야 두 계층의 계약이 구조적 타이핑에 기대어 우연히 결합되지 않는다.
+
+여기에는 한 가지 전제가 더 있다. 네트워크 응답이나 SDK가 던진 값은 타입 선언만으로 신뢰할 수 없으므로, `PaymentClient` 어댑터가 이를 `unknown`으로 받아 런타임에서 검증한다고 가정한다. 결제 거절과 요청 시간 초과처럼 식별할 수 있는 실패만 `PaymentClientError`로 분류하고, 형식이 깨졌거나 의미를 알 수 없는 값은 정상적인 결제 실패로 꾸미지 않는다. `mapErr`는 이렇게 이미 `Err`로 분류된 값만 변환할 뿐, 외부 값의 유효성을 대신 확인해주지는 않는다.
+
+## 구현 대신 계약에서 실패를 읽기
+
+실패가 반환 타입에 남으면 호출부에서 코드를 읽는 방향도 달라진다. 전에는 `placeOrder` 안으로 들어가 어떤 예외가 던져지는지 찾아야 했다면, 이제는 `PlaceOrderFailure`를 확인하고 그 값들을 처리하면 된다.
+
+```ts
+const result = await placeOrder(input);
+
+result.match(
+  showOrderCompleted,
+  handlePlaceOrderFailure,
+);
+
+function handlePlaceOrderFailure(
+  failure: PlaceOrderFailure,
+) {
+  switch (failure.type) {
+    case "OUT_OF_STOCK":
+      return openQuantityEditor();
+    case "INVALID_COUPON":
+      return openCouponSelector();
+    case "PAYMENT_DECLINED":
+      return openPaymentMethodSelector();
+    case "PAYMENT_UNAVAILABLE":
+      return showRetryGuide();
+    default:
+      return assertNever(failure);
+  }
+}
+
+function assertNever(value: never): never {
+  throw new Error(
+    `Unhandled PlaceOrderFailure: ${JSON.stringify(value)}`,
+  );
+}
+```
+
+여기서 실패마다 다른 화면을 여는 것은 실패 정보가 호출부까지 전달됐다는 것을 보여주기 위한 예시다. 더 중요한 변화는 `PlaceOrderFailure`에 새로운 실패가 추가됐을 때 생긴다. `switch`의 모든 분기를 지나 마지막 `assertNever`에 도달한 `failure`는 `never`여야 한다. 새로운 실패가 추가되면 더 이상 `never`가 아니므로, 처리하지 않은 경우가 남았다는 타입 오류가 이 호출부에 생긴다.
+
+컴파일러가 어떤 화면을 열어야 하는지 알려주는 것은 아니다. 그 판단은 여전히 제품과 개발자의 몫이다. 다만 새로운 실패가 생겼는데 이 호출부에서 아직 그에 대한 판단을 내리지 않았다는 사실은 알려준다.
+
+이 보장은 모든 호출부에 자동으로 생기지 않는다. `ResultAsync`를 반환해도 호출자가 결과를 무시하거나 실패를 하나의 일반 값으로 축약하면 TypeScript는 처리를 강제하지 않는다. 실패 계약의 변경을 타입 오류로 발견하려면 호출부가 union을 exhaustive하게 처리해야 하며, 팀 전체에서 결과의 소비 자체를 강제하려면 lint 규칙 같은 별도의 장치가 필요하다. 타입에 실패를 적는 것과 그 실패를 빠짐없이 처리하게 만드는 것은 서로 다른 단계다.
+
+`Result`는 여러 함수를 연결할 때도 실패 정보를 계속 들고 간다. 어느 단계에서 실패 타입이 추가되고, 다른 맥락으로 번역되고, 최종 호출부까지 전달되는지가 반환 타입에 남는다. 성공 경로만 이어 붙인 뒤 실패는 바깥 `catch`에서 추측하던 코드와는 이 지점이 다르다.
+
+결국 차이는 코드를 읽는 비용에서 나타난다. 예외 기반 코드에서는 호출부를 이해하기 위해 구현을 따라 내려가야 했다. 실패가 반환 타입에 있으면 현재 함수의 계약만으로 다음 코드를 작성할 수 있다. 구현을 몰라도 된다는 말은 내부 동작이 중요하지 않다는 뜻이 아니라, 지금 하려는 일과 관계없는 내부 코드까지 읽을 필요는 없다는 뜻이다.
+
+## 예측 가능성에도 경계가 있다
+
+여기까지 읽으면 런타임에서 발생할 수 있는 모든 오류를 `PlaceOrderFailure`에 넣어야 하는지 궁금해질 수 있다. 결제 거절처럼 시스템이 예상하고 의미를 부여한 실패도 있지만, 형식이 깨진 서버 응답이나 SDK의 결함, `TypeError`처럼 아직 분류하지 못한 오류도 있기 때문이다.
+
+이 문제를 피하려고 `ResultAsync<Order, PlaceOrderFailure | unknown>`을 반환하면 더 안전해 보일 수 있다. 하지만 `PlaceOrderFailure | unknown`은 결국 `unknown`이 된다. 알려진 실패와 알 수 없는 오류를 하나로 합치는 순간, 호출자는 다시 어떤 실패가 올 수 있는지 알 수 없게 된다.
+
+이 글에서 말하는 예측 가능성은 모든 런타임 오류를 미리 안다는 뜻이 아니다. 함수가 계약으로 약속한 실패를 호출자가 타입에서 확인할 수 있고, 그 정보가 함수의 조합을 따라 유지된다는 뜻에 가깝다. 계약으로 설명할 수 없는 오류는 알려진 실패인 것처럼 꾸미기보다 사용자 액션이나 요청을 실행하는 바깥 경계에서 관측할 수 있다.
+
+```ts
+async function runUserAction(
+  action: () => Promise<void>,
+) {
+  try {
+    await action();
+  } catch (cause: unknown) {
+    const incidentId = reportUnexpectedError(cause);
+    showUnexpectedErrorFallback(incidentId);
+  }
+}
+```
+
+`placeOrder`의 호출부는 반환 계약에 적힌 실패를 처리하고, `runUserAction`은 그 계약에 포함되지 않은 예외를 기록해 공통 오류 상태를 보여준다. 모든 호출부에 `try/catch`를 반복하자는 이야기가 아니라, 예상한 실패를 다루는 코드와 예상하지 못한 오류를 관측하는 공통 실행 경계를 구분하자는 것이다. `ResultAsync`도 잘못된 어댑터나 예외를 던지는 콜백을 만나면 거부될 수 있으므로, 바깥 경계는 정상적인 실패 분기가 아니라 계약이 깨진 상황을 관측하는 역할을 한다.
+
+반드시 예외 없이 끝나야 하는 경계라면 예상하지 못한 오류도 값으로 바꿀 수 있다. 그래도 원인 자체인 `unknown`을 제품 실패에 섞기보다는, 오류를 관측한 뒤 발급한 식별자를 가진 별도의 `UnexpectedFailure`로 구분하는 편이 낫다. 그래야 알려진 실패에 대한 정보까지 함께 잃지 않는다.
+
+## 안 읽어도 될 코드를 안 읽는다는 것
+
+처음의 `handleOrderSubmit`으로 돌아가보자. `try/catch`만으로는 어떤 함수가 무엇을 던지는지 알 수 없었고, 호출자는 구현을 따라가며 실패 가능성을 직접 복원해야 했다. 그 과정에서 얻은 정보는 코드의 계약이 아니라 개발자의 기억과 팀의 관습에 남았다.
+
+실패를 반환값으로 옮기면 함수의 타입이 성공뿐 아니라 실패도 설명한다. 호출자는 구현을 열어보지 않고 실패를 처리할 수 있으며, 실패 계약이 바뀌면 모든 경우를 빠짐없이 처리하던 호출부에서 누락된 결정을 발견할 수 있다. `neverthrow`는 이 계약을 비동기 코드에서 조합하기 편하게 만들어주는 도구이지, 외부 입력을 검증하거나 결과의 소비를 강제하며 예측 가능성을 대신 만들어주는 것은 아니다.
+
+에러 처리의 예측 가능성은 모든 오류를 알고 있는 상태를 뜻하지 않는다. 적어도 함수가 약속한 실패만큼은 함수의 계약에서 읽을 수 있는 상태에 가깝다. 그렇게 되면 우리는 코드를 전혀 읽지 않아도 되는 것이 아니라, 지금 이해하지 않아도 될 코드를 읽지 않은 채 본래 해결하려던 문제에 집중할 수 있다.
