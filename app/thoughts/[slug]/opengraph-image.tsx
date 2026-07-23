@@ -18,10 +18,9 @@ export default async function Image(props: {
   const { metadata } = await import(`../_articles/${decodedSlug}.mdx`);
 
   const fontsDirectory = path.join(process.cwd(), "assets", "fonts");
-  const [bold, regular] = await Promise.all([
-    fs.readFile(path.join(fontsDirectory, "Pretendard-Bold.otf")),
-    fs.readFile(path.join(fontsDirectory, "Pretendard-Regular.otf")),
-  ]);
+  const bold = await fs.readFile(
+    path.join(fontsDirectory, "Pretendard-Bold.otf")
+  );
 
   return new ImageResponse(
     (
@@ -31,77 +30,30 @@ export default async function Image(props: {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "80px 96px",
+          justifyContent: "flex-end",
+          padding: "88px 96px",
           backgroundColor: "#fcfcfc",
           fontFamily: "Pretendard",
         }}
       >
         <div
           style={{
-            position: "absolute",
-            left: 96,
-            top: 80,
-            bottom: 80,
-            width: 1,
-            backgroundColor: "#d8dbdf",
-          }}
-        />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            paddingLeft: 56,
-            paddingTop: 40,
+            fontSize: metadata.title.length > 18 ? 80 : 96,
+            fontWeight: 700,
+            color: "#1e2125",
+            lineHeight: 1.25,
+            wordBreak: "keep-all",
+            textWrap: "balance",
+            maxWidth: 1008,
           }}
         >
-          <div
-            style={{
-              fontSize: metadata.title.length > 24 ? 56 : 68,
-              fontWeight: 700,
-              color: "#1e2125",
-              lineHeight: 1.3,
-              wordBreak: "keep-all",
-            }}
-          >
-            {metadata.title}
-          </div>
-          {metadata.description && (
-            <div
-              style={{
-                fontSize: 30,
-                fontWeight: 400,
-                color: "#697381",
-                marginTop: 28,
-                lineHeight: 1.5,
-                wordBreak: "keep-all",
-              }}
-            >
-              {metadata.description}
-            </div>
-          )}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            paddingLeft: 56,
-            fontSize: 26,
-            fontWeight: 400,
-            color: "#8c95a1",
-          }}
-        >
-          <div>hoonnotes.me</div>
-          {metadata.date && <div>{metadata.date.replaceAll(".", "-")}</div>}
+          {metadata.title}
         </div>
       </div>
     ),
     {
       ...size,
-      fonts: [
-        { name: "Pretendard", data: bold, weight: 700 },
-        { name: "Pretendard", data: regular, weight: 400 },
-      ],
+      fonts: [{ name: "Pretendard", data: bold, weight: 700 }],
     }
   );
 }
